@@ -1,3 +1,6 @@
 [submodule "vendor/polyscope"]
 	path = vendor/polyscope
 	url = https://github.com/nmwsharp/polyscope
+[submodule "vendor/lbfgspp"]
+	path = vendor/lbfgspp
+	url = https://github.com/yixuan/LBFGSpp

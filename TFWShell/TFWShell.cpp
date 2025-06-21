@@ -345,7 +345,6 @@ std::vector<Eigen::Matrix2d> TFWShell::computeStretchingDensityFromQuad(int face
 	
 	// compute the first term, namely the constant term in the Fourier series
 	Eigen::Matrix2d M0 = Ibar.inverse() * (I + 0.5 * a * a * dphidphiTensor + 0.5 * dadaTensor - Ibar);
-
 	Mats.push_back(M0);
 	if (deriv)
 	{
@@ -955,7 +954,6 @@ double TFWShell::stretchingEnergyPerface(int faceId, Eigen::VectorXd* deriv, Eig
 		hessian->resize(9, 9);
 		hessian->setZero();
 	}
-
 	for (int i = 0; i < _setup.quadPoints.size(); i++)
 	{
 		std::vector<Eigen::MatrixXd> matderivs;
