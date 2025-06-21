@@ -1,4 +1,0 @@
-add_subdirectory(ElasticShellGui)
-add_subdirectory(TFWShellGui)
-add_subdirectory(ElasticShellCli)
-add_subdirectory(TFWShellCli)

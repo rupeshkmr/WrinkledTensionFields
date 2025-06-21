@@ -162,7 +162,6 @@ void TFW::TFWSetup::buildQuadraturePoints()
             point.v = pos[(i + 1) % 3];
             quadPoints.push_back(point);
         }
-
     }
 
 }

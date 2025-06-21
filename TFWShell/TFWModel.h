@@ -17,6 +17,9 @@ class TFWModel
 {
 public:
 	void initialization(const TFWSetup setup, const TFWState state, std::map<int, double> *clampedDOFs, std::string filePath, bool isUsePosHess = false, bool isParallel = false);
+
+	void setProjM(std::map<int, double> *clampedDOFs);
+
 	void convertCurState2Variables(const TFWState curState, Eigen::VectorXd &x);
 	void convertVariables2CurState(const Eigen::VectorXd x, TFWState &curState);
 
@@ -26,20 +29,20 @@ public:
 
 	void gradient(const Eigen::VectorXd &x, Eigen::VectorXd &grad);
 	void hessian(const Eigen::VectorXd& x, Eigen::SparseMatrix<double>& hessian);     
-	
-	void save(int curIterations, TimeCost curTimeCost, double stepSize, double oldEnergy, double curEnergy, double fDelta, double ampDelta, double dphiDelta, double reg, double* projGradNorm, bool PSDHess, bool isSaveAllIntermediate = true);
-
-	Eigen::VectorXd getFullDir(const Eigen::VectorXd &dir) { return _projM.transpose() * dir; }
-	int nFreeAmp() {return _freeAmp; }
-	int nFreePhi() {return _freePhi; }
-	int nFreeDphi() { return _freeDphi; }
-
-	Eigen::SparseMatrix<double> buildIntegrabilityConstraints();
+	Eigen::VectorXd getProjectedGradient(const Eigen::VectorXd &x);
 
 	void testValueAndGradient(const Eigen::VectorXd &x);
 	void testGradientAndHessian(const Eigen::VectorXd& x);
 
-	void setProjM(std::map<int, double> *clampedDOFs);
+    
+	Eigen::VectorXd getFullDir(const Eigen::VectorXd &dir) { return _projM.transpose() * dir; }
+
+	int nFreeAmp() {return _freeAmp; }
+	int nFreePhi() {return _freePhi; }
+	int nFreeDphi() { return _freeDphi; }
+
+
+
 	Eigen::VectorXd fullGradient(const Eigen::VectorXd &grad) {return _projM.transpose() * grad;}
 
 	bool isC2() { return true; }
@@ -48,15 +51,6 @@ public:
 	{
 		return 1e15;
 	}
-	
-
-	// testing whether near the optimality, the constrainted hessian is near PD
-	void checkPD4ConstraintedHess(const Eigen::VectorXd &x);
-
-	Eigen::VectorXd getProjectedGradient(const Eigen::VectorXd &x);
-
-private:
-	void getUpsampledWrinkledMesh(Eigen::MatrixXd& NV, Eigen::MatrixXi& NF, Eigen::MatrixXd &upsampledTFTV, Eigen::MatrixXi &upsampledTFTF, Eigen::MatrixXd &soupPhiV, Eigen::MatrixXi &soupPhiF, Eigen::MatrixXd &soupProblemV, Eigen::MatrixXi &soupProblemF, Eigen::VectorXd &upsampledAmp, Eigen::VectorXd &soupPhi);
 
 public:
 	TFWSetup _setup;
@@ -76,6 +70,4 @@ public:
 	int _freeDphi;
 
 	double _reg;
-
-	std::string _filePrefix;
 };
