@@ -2,7 +2,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 
-#include "../CommonFunctions.h"
+#include "CommonFunctions.h"
 
 namespace TFW
 {

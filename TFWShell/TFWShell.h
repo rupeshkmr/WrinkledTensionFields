@@ -16,7 +16,7 @@
 #include "../SecondFundamentalForm/MidedgeAngleTanFormulation.h"
 
 
-#include "../CommonFunctions.h"
+#include "CommonFunctions.h"
 
 #include "TFWSetup.h"
 #include "TFWState.h"

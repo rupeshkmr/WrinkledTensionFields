@@ -14,10 +14,10 @@
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 
-#include "SecondFundamentalForm/SecondFundamentalFormDiscretization.h"
-#include "SecondFundamentalForm/MidedgeAngleSinFormulation.h"
-#include "SecondFundamentalForm/MidedgeAngleTanFormulation.h"
-#include "SecondFundamentalForm/MidedgeAverageFormulation.h"
+#include "../SecondFundamentalForm/SecondFundamentalFormDiscretization.h"
+#include "../SecondFundamentalForm/MidedgeAngleSinFormulation.h"
+#include "../SecondFundamentalForm/MidedgeAngleTanFormulation.h"
+#include "../SecondFundamentalForm/MidedgeAverageFormulation.h"
 
 struct QuadraturePoints
 {

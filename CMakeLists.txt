@@ -10,6 +10,8 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/libigl/libigl.git
     GIT_TAG 7b6cc27  # Lock to a specific commit
 )
+# Find TBB package
+find_package(TBB REQUIRED)
 
 # Skip if already available
 if(NOT TARGET igl::core)

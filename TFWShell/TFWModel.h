@@ -6,7 +6,7 @@
 #include "../SecondFundamentalForm/MidedgeAverageFormulation.h"
 #include "../SecondFundamentalForm/MidedgeAngleSinFormulation.h"
 #include "../SecondFundamentalForm/MidedgeAngleTanFormulation.h"
-#include "../CommonFunctions.h"
+#include "CommonFunctions.h"
 
 #include "TFWSetup.h"
 #include "TFWState.h"

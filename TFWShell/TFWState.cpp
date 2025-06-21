@@ -1,6 +1,6 @@
 #include "TFWState.h"
 
-#include "../CommonFunctions.h"
+#include "CommonFunctions.h"
 
 using namespace TFW;
 

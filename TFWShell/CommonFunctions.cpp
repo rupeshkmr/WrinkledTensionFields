@@ -3,9 +3,9 @@
 #include <iostream>
 #include <filesystem>
 #include "CommonFunctions.h"
-#include "MeshLib/MeshGeometry.h"
-#include "MeshLib/IntrinsicGeometry.h"
-#include "MeshLib/MeshConnectivity.h"
+#include "../MeshLib/MeshGeometry.h"
+#include "../MeshLib/IntrinsicGeometry.h"
+#include "../MeshLib/MeshConnectivity.h"
 
 #ifdef __APPLE__
 namespace fs = std::__fs::filesystem;

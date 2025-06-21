@@ -7,7 +7,7 @@ file(GLOB MESHLIBSOURCES {PROJECT_SOURCE_DIR}/MeshLib/*.cpp)
 add_library(TFWLib STATIC ${EXECUTABLES})
 target_link_libraries(TFWLib PRIVATE SFF)
 target_link_libraries(TFWLib PRIVATE MeshLib)
-target_link_libraries(TFWLib Eigen3::Eigen)
+target_link_libraries(TFWLib PRIVATE Eigen3::Eigen igl::core)
 # Make library headers accessible
 target_include_directories(TFWLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
