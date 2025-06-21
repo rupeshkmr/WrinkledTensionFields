@@ -15,7 +15,7 @@ public:
     int faceVertex(int face, int vertidx) const {return F(face,vertidx);}
     int faceEdge(int face, int vertidx) const {return FE(face,vertidx);} // opposite vertex vertidx
     int faceEdgeOrientation(int face, int vertidx) const { return FEorient(face, vertidx); } // face = edgeFace(faceEdge(face, i), faceEdgeOrientation(face, i))
-
+    Eigen::MatrixXi getF() { return F; }
     int edgeVertex(int edge, int vertidx) const {return EV(edge,vertidx);}
     int edgeFace(int edge, int faceidx) const {return EF(edge,faceidx);}
     int edgeOppositeVertex(int edge, int faceidx) const { return EOpp(edge, faceidx); }

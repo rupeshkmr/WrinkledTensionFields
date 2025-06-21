@@ -41,5 +41,6 @@ add_subdirectory(src)
 add_subdirectory(SecondFundamentalForm)
 add_subdirectory(MeshLib)
 add_subdirectory(TFWShell)
+add_subdirectory(vendor)
 
 

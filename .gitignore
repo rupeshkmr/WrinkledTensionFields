@@ -50,3 +50,21 @@ tags
 *.exe
 *.out
 *.app
+
+# build folders
+cmake-build-debug/
+cmake-build*/
+.venv/
+**/.DS_Store
+*.ini
+*__pycache__/
+*.ipynb_checkpoints/
+/vendor/CoMISo/
+# ctags file
+tags
+# cmake
+compile_commands.json
+.cache
+out
+.pyc
+
