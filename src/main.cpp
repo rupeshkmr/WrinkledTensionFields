@@ -8,6 +8,7 @@
 #include <TFWModel.h>
 #include <polyscope/polyscope.h>
 #include <LBFGS.h>
+#include <LBFGSB.h>
 #include <polyscope/surface_mesh.h>
 TFW::TFWSetup setup;
 TFW::TFWState state;
@@ -172,12 +173,21 @@ void optimize()
 {
     Eigen::VectorXd initX;
     model.convertCurState2Variables(state, initX);
-    LBFGSpp::LBFGSParam<double> param;
+    LBFGSpp::LBFGSBParam<double> param;
     param.epsilon = 1e-6;
     param.max_iterations = 100;
 
     // Create solver and function object
-    LBFGSpp::LBFGSSolver<double> solver(param);
+    //<double> solver(param);
+    LBFGSpp::LBFGSBSolver<double> solver(param);
+    // Bounds
+    int nverts = state.basePos.rows();
+    int nedges = state.baseMesh.nEdges();
+    Eigen::VectorXd lb = Eigen::VectorXd::Constant(nverts + nedges, -std::numeric_limits<double>::max());
+    Eigen::VectorXd ub = Eigen::VectorXd::Constant(nverts + nedges, std::numeric_limits<double>::max());
+    lb(Eigen::seq(0, nverts-1)) = Eigen::VectorXd::Constant(nverts, 0);
+    lb = model._projM * lb;
+    ub = model._projM * ub;
     double e;
     Functor f;
     f.m_model = model;
@@ -186,7 +196,7 @@ void optimize()
     // optimize
     for(int iter=1; iter<10000; iter++)
     {
-        solver.minimize(f, initX, e);
+        solver.minimize(f, initX, e, lb, ub);
         // load optimal values
         model.convertVariables2CurState(initX, state);
         // save state
