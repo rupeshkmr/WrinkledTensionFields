@@ -90,10 +90,21 @@ void loadSetup()
     locatePotentialPureTensionFaces(setup.abars, state.basePos, state.baseMesh.faces(), state.tensionFaces);
     state.computeBaseCurvature();           // This step is important. 
 
-    setup.clampedDOFsPath = "";
+    setup.clampedDOFsPath = "../../../../openargus/examples/assets/square_mesh/square8x82EdgesClamped.txt";
+    Eigen::MatrixXi clampedverts;
+    openEigenData(setup.clampedDOFsPath, &clampedverts);
+    std::cout << "Clamped Verts " << std::endl;
+    std::cout << clampedverts << std::endl;
+    int ncv = clampedverts.rows();
     // read clamped dofs details
-    // for each clamped vertex: 
-    //setup.clampedDOFs[3 * vid + j] = state.basePos(vid, j);
+    for(int i=0; i<ncv; i++)
+    {
+        int vid = clampedverts(i);
+        // for each clamped vertex: 
+        //setup.clampedDOFs[3 * vid + j] = state.basePos(vid, j);
+        for(int j=0; j<3; j++)
+            setup.clampedDOFs[3*vid + j] = state.basePos(vid, j);
+    }
 
     int nverts = state.basePos.rows();
     int nedges = state.baseMesh.nEdges();
@@ -106,7 +117,20 @@ void loadSetup()
     state.dphi = data(Eigen::seq(81, 81 + 207),0);
     std::cout << "Nverts " << nverts << std::endl;
     std::cout << "Nedges " << nedges << std::endl;
-    model.initialization(setup, state, NULL, "", true, false);
+    // fill clamped dofs info
+    std::map<int, double> clampedDOFs;
+	if (setup.clampedChosenVerts) // whether we clamped the vertices which were clamped in the TFT step
+	{
+		std::map<int, double>::const_iterator it;
+		for (it = setup.clampedDOFs.begin(); it != setup.clampedDOFs.end(); it++)
+		{
+			state.amplitude[it->first / 3] = 0;
+			clampedDOFs[it->first / 3] = 0;
+		}
+	}
+
+
+    model.initialization(setup, state, &clampedDOFs, "", true, false);
 }
 // only saves wrinkle parametes
 void saveState(std::string filepath)
@@ -156,15 +180,16 @@ void optimize()
     Functor f;
     f.m_model = model;
     // save initial state
-    saveState("x0");
+    saveState("../../checkpoints/x0");
     // optimize
-    for(int iter=1; iter<1000; iter++)
+    for(int iter=1; iter<10000; iter++)
     {
         solver.minimize(f, initX, e);
-        saveState("x" + std::to_string(iter));
+        // load optimal values
+        model.convertVariables2CurState(initX, state);
+        // save state
+        saveState("../../checkpoints/x" + std::to_string(iter));
     }
-    // load optimal values
-    model.convertVariables2CurState(initX, state);
 }
 
 int main()
