@@ -15,7 +15,6 @@ TFWModel model;
 template<typename T>
 bool openEigenData(std::string fileToOpen, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>* data)
 {
-
     // the inspiration for creating this function was drawn from here (I did NOT copy and paste the code)
     // https://stackoverflow.com/questions/34247057/how-to-read-csv-file-and-assign-to-eigen-matrix
     std::vector<T> matrixEntries;
@@ -58,6 +57,15 @@ bool openEigenData(std::string fileToOpen, Eigen::Matrix<T, Eigen::Dynamic, Eige
     // }
 }
 
+template<typename T>
+void writeEigenData(std::string filename, T data)
+{
+    const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
+    std::ofstream file;
+    file.open(filename);
+    file << data.format(CSVFormat);
+}
+
 void loadSetup()
 {
     // setup mesh 
@@ -78,6 +86,7 @@ void loadSetup()
     igl::readOBJ(setup.baseMeshPath, state.basePos, baseF);
     state.baseMesh = MeshConnectivity(baseF);
     setup.sff->initializeExtraDOFs(state.baseEdgeDOFs, state.baseMesh, state.basePos);
+    // removes flat triangle amplitudes
     locatePotentialPureTensionFaces(setup.abars, state.basePos, state.baseMesh.faces(), state.tensionFaces);
     state.computeBaseCurvature();           // This step is important. 
 
@@ -88,15 +97,27 @@ void loadSetup()
 
     int nverts = state.basePos.rows();
     int nedges = state.baseMesh.nEdges();
+
     // load 
     Eigen::MatrixXd data;
     bool ld = openEigenData("../../../../openargus/scripts/debug/tfw_vs_ours/tfw_sheet/results/x0", &data);
     std::cout << data.rows() << " x " << data.cols() << std::endl;
     state.amplitude = data(Eigen::seq(0,80),0);
-    state.dphi = data(Eigen::seq(81, 81 + 207 -1),0);
+    state.dphi = data(Eigen::seq(81, 81 + 207),0);
     std::cout << "Nverts " << nverts << std::endl;
     std::cout << "Nedges " << nedges << std::endl;
     model.initialization(setup, state, NULL, "", true, false);
+}
+// only saves wrinkle parametes
+void saveState(std::string filepath)
+{
+    Eigen::VectorXd params;
+    int nverts = state.basePos.rows();
+    int nedges = state.baseMesh.nEdges();
+    params.resize(nverts + nedges);
+    params(Eigen::seq(0, nverts-1)) = state.amplitude;
+    params(Eigen::seq(nverts, nverts + nedges -1)) = state.dphi;
+    writeEigenData(filepath, params); 
 }
 
 double getEnergy(Eigen::VectorXd* deriv)
@@ -127,29 +148,29 @@ void optimize()
     model.convertCurState2Variables(state, initX);
     LBFGSpp::LBFGSParam<double> param;
     param.epsilon = 1e-6;
-    param.max_iterations = 1000;
+    param.max_iterations = 100;
 
     // Create solver and function object
     LBFGSpp::LBFGSSolver<double> solver(param);
     double e;
     Functor f;
     f.m_model = model;
-    solver.minimize(f, initX, e);
-    std::cout << "optimal dofs " << std::endl;
-    std::cout << initX << std::endl;
-
-    exit(0);
+    // save initial state
+    saveState("x0");
+    // optimize
+    for(int iter=1; iter<1000; iter++)
+    {
+        solver.minimize(f, initX, e);
+        saveState("x" + std::to_string(iter));
+    }
+    // load optimal values
+    model.convertVariables2CurState(initX, state);
 }
 
 int main()
 {
-    std::cout << "Hello from main " << std::endl;
     loadSetup();   	
 
-    // projection matrix is fine
-    std::cout << "Projection Matrix " << std::endl;
-    std::cout << Eigen::MatrixXd(model._projM).lpNorm<1>() << std::endl;
-    
     Eigen::VectorXd deriv;
     double energy = getEnergy(&deriv);
     std::cout << "Energy = " << energy << std::endl;
