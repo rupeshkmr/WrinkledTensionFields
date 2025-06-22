@@ -63,7 +63,6 @@ void TFWModel::setProjM(std::map<int, double>* clampedDOFs)
 
 	int freeDOFs = nedges + nverts - constrainedDOFs;
 	int row = 0;
-
 	for (int i = 0; i < nedges + nverts; i++)
 	{
 		if (_clampedDOFs.find(i) != _clampedDOFs.end())
@@ -79,7 +78,6 @@ void TFWModel::setProjM(std::map<int, double>* clampedDOFs)
 	}
 	_projM.resize(freeDOFs, nedges + nverts);
 	_projM.setFromTriplets(proj.begin(), proj.end());
-
 
 	std::cout << "Free Amps: " << _freeAmp << std::endl;
 	std::cout << "Free dphis: " << _freeDphi << std::endl;

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <igl/readOBJ.h>
 #include <igl/writeOBJ.h>
 #include <TFWState.h>
@@ -153,6 +154,7 @@ double getEnergy(Eigen::VectorXd* deriv)
     // std::cout << "InitX " << initX << " Energy = " << energy << std::endl;
     if(deriv)
         model.gradient(initX, *deriv);
+    (*deriv) = model._projM.transpose() * (*deriv);
     return energy;
 }
 class Functor
@@ -200,7 +202,10 @@ int main()
     double energy = getEnergy(&deriv);
     std::cout << "Energy = " << energy << std::endl;
     optimize();
-    // std::cout << "Deriv " << deriv << std::endl;
+    // std::cout << "Deriv \n" << deriv << std::endl;
+    // std::fstream f("deriv.txt", std::ios_base::out);
+    // f << deriv;
+    // f.close();
     // polyscope::init();
     // polyscope::registerSurfaceMesh("Base Mesh", state.basePos, state.baseMesh.getF());
     // polyscope::registerSurfaceMesh("Rest Mesh", setup.restV, setup.restF);
