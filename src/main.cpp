@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include <igl/readOBJ.h>
 #include <igl/writeOBJ.h>
 #include <TFWState.h>
@@ -191,8 +192,20 @@ void optimize()
     double e;
     Functor f;
     f.m_model = model;
+    time_t t = time(NULL);
+    std::stringstream st;
+    st << t;
+    std::string checkpointDirName = st.str();
     // save initial state
-    saveState("../../checkpoints/x0");
+    std::string dirName = "../../checkpoints/" + checkpointDirName + "/";
+    std::filesystem::path path = dirName;
+    std::filesystem::create_directory(path);
+
+    path = dirName + "base";
+    std::filesystem::create_directory(path);
+    path = dirName + "wrinkle";
+    std::filesystem::create_directory(path);
+    saveState(dirName + "base/x0");
     // optimize
     for(int iter=1; iter<10000; iter++)
     {
@@ -200,9 +213,12 @@ void optimize()
         // load optimal values
         model.convertVariables2CurState(initX, state);
         // save state
-        saveState("../../checkpoints/x" + std::to_string(iter));
+        saveState(dirName + "base/x" + std::to_string(iter));
     }
     state.getWrinkleMesh(setup, 3);
+    // save wrinkled state
+    std::string wrinkleName = dirName + "wrinkle/wrinkle.obj";
+    igl::writeOBJ(wrinkleName, state.wrinkledPos, state.wrinkledF);
 }
 
 int main()
