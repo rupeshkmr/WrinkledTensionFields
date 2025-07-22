@@ -64,5 +64,6 @@ namespace TFW
 			if (baseMesh.nFaces() > 1)
 				igl::principal_curvature(basePos, baseMesh.faces(), PD1, PD2, PV1, PV2);
 		}
+        void getWrinkleMesh(const TFWSetup& setup, int upsamplingTimes = 2, bool isUseV1Term = false, bool isUseV2Term = true);
 	};
 }

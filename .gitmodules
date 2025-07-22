@@ -4,3 +4,6 @@
 [submodule "vendor/lbfgspp"]
 	path = vendor/lbfgspp
 	url = https://github.com/yixuan/LBFGSpp
+[submodule "vendor/nasoq"]
+	path = vendor/nasoq
+	url = https://github.com/sympiler/nasoq.git

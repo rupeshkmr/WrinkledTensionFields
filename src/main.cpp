@@ -202,6 +202,7 @@ void optimize()
         // save state
         saveState("../../checkpoints/x" + std::to_string(iter));
     }
+    state.getWrinkleMesh(setup, 3);
 }
 
 int main()
@@ -212,6 +213,7 @@ int main()
     double energy = getEnergy(&deriv);
     std::cout << "Energy = " << energy << std::endl;
     optimize();
+
     // std::cout << "Deriv \n" << deriv << std::endl;
     // std::fstream f("deriv.txt", std::ios_base::out);
     // f << deriv;
